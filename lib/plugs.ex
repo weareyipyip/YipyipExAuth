@@ -1,6 +1,6 @@
 defmodule YipyipExAuth.Plugs do
   @moduledoc """
-  Function plugs to create and delete sessions. `&create_session/2` can be used in combination with
+  Function plugs to create and delete sessions. `create_session/3` can be used in combination with
   `YipyipExAuth.Plugs.ProcessRefreshToken` for token refreshing.
   """
   alias Plug.Conn
