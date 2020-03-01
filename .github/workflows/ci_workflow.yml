@@ -1,0 +1,47 @@
+name: CI / Automated testing
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        elixir: [1.9.x, 1.10.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - uses: actions/setup-elixir@v1.2.0
+        with:
+          otp-version: 22.x
+          elixir-version: ${{matrix.elixir}}
+      - name: Cache deps
+        uses: actions/cache@v1
+        with:
+          path: deps
+          key: deps-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            deps-${{ matrix.elixir }}-
+      - name: Cache build
+        uses: actions/cache@v1
+        with:
+          path: _build
+          key: build-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            build-${{ matrix.elixir }}
+      - name: Display build environment
+        run: printenv
+      - name: Install dependencies
+        run: mix do local.hex --force, local.rebar --force, deps.get
+      - name: Compile code (warnings as errors)
+        run: mix compile --warnings-as-errors
+      - name: Check code formatting
+        run: mix format --check-formatted
+      - name: Run tests (with coverage)
+        run: mix test --cover
+      - name: Create docs
+        run: mix docs
+      - name: Run dialyzer
+        run: mix dialyzer

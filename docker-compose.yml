@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  elixir:
+    image: elixir:${ELIXIR_VERSION:-1.10}-alpine
+    working_dir: /application/${ELIXIR_VERSION:-1.10}
+    # The top mount mounts the local source code into the container for compilation and running.
+    # The other mounts effectively function as exclusions on the top mount, to prevent build artifacts from being created locally (as root).
+    # Some of the other mounts are mapped to docker volumes to improve build-on-build performance by caching the build artifacts.
+    # To completely clean the volumes, execute `docker-compose down -v` in a shell. A subsequent `docker-compose up` will run in a fresh environment.
+    volumes:
+      - .:/application/${ELIXIR_VERSION:-1.10}:cached
+      - /application/${ELIXIR_VERSION:-1.10}/.elixir_ls
+      - /application/${ELIXIR_VERSION:-1.10}/cover
+      - __build:/application/${ELIXIR_VERSION:-1.10}/_build
+      - _deps:/application/${ELIXIR_VERSION:-1.10}/deps
+      - _mix:/root/.mix
+    environment:
+      MIX_ENV: dev
+    command:
+      - /bin/sh
+      - -c
+      - |
+        mix local.hex --force
+        mix local.rebar --force
+        mix deps.get
+        /bin/sh
+
+volumes:
+  __build:
+  _deps:
+  _mix:

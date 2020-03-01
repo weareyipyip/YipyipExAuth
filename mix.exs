@@ -4,10 +4,26 @@ defmodule YipyipExAuth.MixProject do
   def project do
     [
       app: :yipyip_ex_auth,
-      version: "0.1.0",
-      elixir: "~> 1.10",
+      version: "0.1.0-alpha1",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      description: """
+      Session manager for Elixir based on stateless access- and stateful refresh (Phoenix) tokens
+      """,
+      package: [
+        name: "yipyip_ex_auth",
+        licenses: ["apache-2.0"],
+        links: %{github: "https://github.com/weareyipyip/YipyipExAuth"},
+        source_url: "https://github.com/weareyipyip/YipyipExAuth"
+      ],
+      source_url: "https://github.com/weareyipyip/YipyipExAuth",
+      name: "YipyipExAuth",
+      docs: [
+        source_ref: "master",
+        extras: ["./README.md"],
+        main: "readme"
+      ]
     ]
   end
 
@@ -21,8 +37,8 @@ defmodule YipyipExAuth.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:ex_doc, "~> 0.21", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev, :test], runtime: false}
     ]
   end
 end
