@@ -100,7 +100,8 @@ defmodule YipyipExAuth.SessionStore do
 
   Implementations may choose to ignore `user_id`, since `session_id` is unique by itself.
   """
-  @callback delete(session_id :: binary, user_id :: binary) :: :ok | {:error, binary}
+  @callback delete(session_id :: binary, user_id :: binary | pos_integer()) ::
+              :ok | {:error, binary}
 
   @doc """
   Insert or update #{Session} `session`, with time-to-live `ttl`.
@@ -115,5 +116,6 @@ defmodule YipyipExAuth.SessionStore do
 
   Implementations may choose to ignore `user_id`, since `session_id` is unique by itself.
   """
-  @callback get(session_id :: binary, user_id :: binary) :: Session.t() | nil | {:error, binary}
+  @callback get(session_id :: binary, user_id :: binary | pos_integer()) ::
+              Session.t() | nil | {:error, binary}
 end

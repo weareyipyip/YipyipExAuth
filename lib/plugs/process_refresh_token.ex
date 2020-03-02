@@ -36,8 +36,7 @@ defmodule YipyipExAuth.Plugs.ProcessRefreshToken do
          {:transport_matches, true} <- {:transport_matches, sig_transport == tst},
          {:session_expired, false} <-
            SharedInternals.session_expired?(sid, uid, exp, session_store),
-         {:session, %Session{user_id: ^uid} = session} <-
-           {:session, session_store.get(sid, uid)},
+         {:session, %Session{user_id: ^uid} = session} <- {:session, session_store.get(sid, uid)},
          {:token_fresh, true} <- {:token_fresh, session.refresh_token_id == rtid} do
       conn
       |> Conn.assign(:current_user_id, uid)
@@ -64,6 +63,9 @@ defmodule YipyipExAuth.Plugs.ProcessRefreshToken do
 
       {:session, :not_found} ->
         SharedInternals.auth_error(conn, "session not found")
+
+      {:session, %Session{}} ->
+        SharedInternals.auth_error(conn, "session user mismatch")
 
       {:session_expired, true} ->
         SharedInternals.auth_error(conn, "session expired")
