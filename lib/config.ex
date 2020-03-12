@@ -73,6 +73,14 @@ defmodule YipyipExAuth.Config do
 
   @doc """
   Build config struct from enumerable (useful for passing in application environment).
+  Raises for missing mandatory keys and sets defaults for optional keys.
+
+  ## Examples / doctests
+
+      iex> from_enum([])
+      ** (ArgumentError) the following keys must also be given when building struct YipyipExAuth.Config: [:session_ttl, :refresh_token_ttl, :session_store_module]
+
+      iex> %YipyipExAuth.Config{} = from_enum([session_ttl: 30 * 24 * 60 * 60, refresh_token_ttl: 24 * 60 * 60, session_store_module: MyModule])
   """
   @spec from_enum(Enum.t()) :: %__MODULE__{}
   def from_enum(enum) do
