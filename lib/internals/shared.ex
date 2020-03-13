@@ -42,6 +42,10 @@ defmodule YipyipExAuth.SharedInternals do
     |> Conn.get_req_header("authorization")
     |> List.first()
     |> auth_header_to_token()
+    |> case do
+      "" -> nil
+      other -> other
+    end
   end
 
   defp auth_header_to_token(<<"Bearer "::binary, token::binary>>), do: token
