@@ -13,7 +13,7 @@ jobs:
       - name: Display build environment
         run: printenv
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - uses: actions/setup-elixir@v1.2.0
         with:
           otp-version: 22.x
@@ -22,8 +22,8 @@ jobs:
         run: mix do local.hex --force, local.rebar --force, deps.get
       - name: Compile code (warnings as errors)
         run: mix compile --warnings-as-errors
-      - name: Check that versions match in tag, readme and mix.exs
-        run: mix run check_versions.exs
+      - name: Check that versions match in Git tag, readme and mix.exs
+        run: mix run check_versions.exs match_git_tag
       - name: Check code formatting
         run: mix format --check-formatted
       - name: Run tests (with coverage)

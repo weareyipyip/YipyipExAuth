@@ -135,10 +135,9 @@ defmodule YipyipExAuth.Plugs.ProcessRefreshToken do
   @impl true
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(conn, {session_store, salt, cookie_name, verification_opts}) do
-    with {:token, {sig_transport, token}} <-
-           {:token, SharedInternals.get_token(conn, cookie_name)},
-         {:ok, %{uid: uid, sid: sid, id: rtid, tst: tst, exp: exp, epl: epl} = payload} <-
-           Token.verify(conn, salt, token, verification_opts),
+    with {:token, {sig_transport, token}} <- SharedInternals.get_token(conn, cookie_name),
+         {:ok, payload} <- Token.verify(conn, salt, token, verification_opts),
+         {:pl, %{uid: uid, sid: sid, id: rtid, tst: tst, exp: exp, epl: epl}} <- {:pl, payload},
          {:transport_matches, true} <- {:transport_matches, sig_transport == tst},
          {:session_expired, false} <-
            SharedInternals.session_expired?(sid, uid, exp, session_store),
@@ -161,7 +160,7 @@ defmodule YipyipExAuth.Plugs.ProcessRefreshToken do
       {:error, :invalid} ->
         SharedInternals.auth_error(conn, "refresh token invalid")
 
-      {:ok, _} ->
+      {:pl, _} ->
         SharedInternals.auth_error(conn, "invalid refresh token payload")
 
       {:transport_matches, false} ->
