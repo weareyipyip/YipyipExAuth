@@ -1,7 +1,7 @@
 defmodule YipyipExAuth.SharedInternalsTest do
   use ExUnit.Case
   # use Plug.Test
-  use Phoenix.ConnTest
+  import Phoenix.ConnTest
   alias Plug.Conn
   import Mock
   alias YipyipExAuth.TestSupport.FakeSessionStore
@@ -47,7 +47,7 @@ defmodule YipyipExAuth.SharedInternalsTest do
         |> put_req_cookie(sig_cookie_name, cookie_sig)
         |> Conn.put_req_header("authorization", "Bearer: #{bearer_token}")
 
-      assert {:cookie, bearer_token <> cookie_sig} == get_token(conn, sig_cookie_name)
+      assert {:token, {:cookie, bearer_token <> cookie_sig}} == get_token(conn, sig_cookie_name)
     end
 
     test "should fall back to bearer signature", %{
@@ -55,17 +55,27 @@ defmodule YipyipExAuth.SharedInternalsTest do
       bearer_token: bearer_token
     } do
       conn = %Conn{} |> Conn.put_req_header("authorization", "Bearer #{bearer_token}")
-      assert {:bearer, bearer_token} == get_token(conn, sig_cookie_name)
+      assert {:token, {:bearer, bearer_token}} == get_token(conn, sig_cookie_name)
     end
 
     test "should return nil if authorization header is missing or malformed or does not have bearer token" do
-      assert nil == get_token(%Conn{}, "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("authorization", ""), "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("authorization", "bearer: a"), "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("Authorization", "Bearer: a"), "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer:a"), "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer: "), "")
-      assert nil == get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer "), "")
+      assert {:token, nil} == get_token(%Conn{}, "")
+      assert {:token, nil} == get_token(%Conn{} |> Conn.put_req_header("authorization", ""), "")
+
+      assert {:token, nil} ==
+               get_token(%Conn{} |> Conn.put_req_header("authorization", "bearer: a"), "")
+
+      assert {:token, nil} ==
+               get_token(%Conn{} |> Conn.put_req_header("Authorization", "Bearer: a"), "")
+
+      assert {:token, nil} ==
+               get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer:a"), "")
+
+      assert {:token, nil} ==
+               get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer: "), "")
+
+      assert {:token, nil} ==
+               get_token(%Conn{} |> Conn.put_req_header("authorization", "Bearer "), "")
     end
   end
 

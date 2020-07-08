@@ -64,7 +64,7 @@ The package can be installed by adding `yipyip_ex_auth` to your list of dependen
 ```elixir
 def deps do
   [
-    {:yipyip_ex_auth, "~> 0.2.0-alpha.1"}
+    {:yipyip_ex_auth, "~> 0.2.1"}
   ]
 end
 ```

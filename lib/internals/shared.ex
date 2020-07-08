@@ -23,11 +23,12 @@ defmodule YipyipExAuth.SharedInternals do
     cookie_signature =
       conn |> Conn.fetch_cookies() |> Map.get(:cookies, %{}) |> Map.get(signature_cookie_name)
 
-    cond do
-      bearer_token && cookie_signature -> {:cookie, bearer_token <> cookie_signature}
-      bearer_token -> {:bearer, bearer_token}
-      true -> nil
-    end
+    {:token,
+     cond do
+       bearer_token && cookie_signature -> {:cookie, bearer_token <> cookie_signature}
+       bearer_token -> {:bearer, bearer_token}
+       true -> nil
+     end}
   end
 
   @doc false

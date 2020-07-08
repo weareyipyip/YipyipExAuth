@@ -127,21 +127,20 @@ defmodule YipyipExAuth.Plugs.ProcessAccessToken do
   @impl true
   @spec call(Conn.t(), Plug.opts()) :: Conn.t()
   def call(conn, {session_store, salt, cookie_name, verification_opts}) do
-    with {sig_transport, token} <- SharedInternals.get_token(conn, cookie_name),
+    with {:token, {sig_transport, token}} <- SharedInternals.get_token(conn, cookie_name),
          {:ok, payload} <- Token.verify(conn, salt, token, verification_opts),
-         %{uid: user_id, tst: exp_sig_trans, sid: session_id, exp: expires_at, epl: epl} <-
-           payload,
+         {:pl, %{uid: uid, tst: exp_sig_trans, sid: sid, exp: exp, epl: epl}} <- {:pl, payload},
          {:transport_matches, true} <- {:transport_matches, sig_transport == exp_sig_trans},
          {:session_expired, false} <-
-           SharedInternals.session_expired?(session_id, user_id, expires_at, session_store) do
+           SharedInternals.session_expired?(sid, uid, exp, session_store) do
       conn
-      |> Conn.assign(:current_user_id, user_id)
-      |> Conn.assign(:current_session_id, session_id)
+      |> Conn.assign(:current_user_id, uid)
+      |> Conn.assign(:current_session_id, sid)
       |> Conn.assign(:extra_access_token_payload, epl)
       |> Conn.put_private(@private_access_token_payload_key, payload)
       |> Conn.put_private(@private_token_signature_transport_key, sig_transport)
     else
-      nil ->
+      {:token, nil} ->
         SharedInternals.auth_error(conn, "bearer token not found")
 
       {:error, :expired} ->
@@ -150,7 +149,7 @@ defmodule YipyipExAuth.Plugs.ProcessAccessToken do
       {:error, :invalid} ->
         SharedInternals.auth_error(conn, "bearer token invalid")
 
-      {:ok, _} ->
+      {:pl, _} ->
         SharedInternals.auth_error(conn, "invalid bearer token payload")
 
       {:transport_matches, false} ->

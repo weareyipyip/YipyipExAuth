@@ -4,7 +4,7 @@ defmodule YipyipExAuth.MixProject do
   def project do
     [
       app: :yipyip_ex_auth,
-      version: "0.2.0-alpha.1",
+      version: "0.2.1",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -39,12 +39,12 @@ defmodule YipyipExAuth.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.21", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.4"},
       # to satisfy phoenix in tests
-      {:poison, only: [:dev, :test]},
+      {:jason, "~> 1.2", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: [:dev], runtime: false},
-      {:mock, "~> 0.3", only: :test}
+      {:mock, "~> 0.3", only: [:test], runtime: false}
     ]
   end
 
