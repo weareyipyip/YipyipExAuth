@@ -129,7 +129,8 @@ defmodule YipyipExAuth.Plugs.ProcessAccessToken do
   def call(conn, {session_store, salt, cookie_name, verification_opts}) do
     with {:token, {sig_transport, token}} <- SharedInternals.get_token(conn, cookie_name),
          {:ok, payload} <- Token.verify(conn, salt, token, verification_opts),
-         {:pl, %{uid: uid, tst: exp_sig_trans, sid: sid, exp: exp, epl: epl}} <- {:pl, payload},
+         {:ok, %{uid: uid, tst: exp_sig_trans, sid: sid, exp: exp, epl: epl}} <-
+           SharedInternals.decompress_access_payload(payload),
          {:transport_matches, true} <- {:transport_matches, sig_transport == exp_sig_trans},
          {:session_expired, false} <-
            SharedInternals.session_expired?(sid, uid, exp, session_store) do
@@ -149,7 +150,7 @@ defmodule YipyipExAuth.Plugs.ProcessAccessToken do
       {:error, :invalid} ->
         SharedInternals.auth_error(conn, "bearer token invalid")
 
-      {:pl, _} ->
+      {:error, :invalid_payload} ->
         SharedInternals.auth_error(conn, "invalid bearer token payload")
 
       {:transport_matches, false} ->

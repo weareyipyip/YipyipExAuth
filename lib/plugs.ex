@@ -9,6 +9,9 @@ defmodule YipyipExAuth.Plugs do
   alias YipyipExAuth.{Config, Utils}
   alias YipyipExAuth.Models.{Session, Tokens}
 
+  import YipyipExAuth.SharedInternals,
+    only: [compress_access_payload: 1, compress_refresh_payload: 1]
+
   @doc """
   Create or update a session. If a session exists in the conn, the session is updated, otherwise a new one is created.
   The session is put on the conn by `YipyipExAuth.Plugs.ProcessRefreshToken`.
@@ -80,8 +83,8 @@ defmodule YipyipExAuth.Plugs do
       ...> |> Utils.set_user_id(1)
       ...> |> create_session(@config)
       iex> cookies = conn |> Conn.fetch_cookies() |> Map.get(:cookies)
-      iex> <<access_sig::binary>> = Map.get(cookies, @config.access_cookie_name)
-      iex> <<refresh_sig::binary>> = Map.get(cookies, @config.refresh_cookie_name)
+      iex> <<_access_sig::binary>> = Map.get(cookies, @config.access_cookie_name)
+      iex> <<_refresh_sig::binary>> = Map.get(cookies, @config.refresh_cookie_name)
       iex> true = Regex.match?(~r/\\w\\.\\w/,  conn |> Utils.get_tokens() |> Map.get(:access_token))
       iex> true = Regex.match?(~r/\\w\\.\\w/,  conn |> Utils.get_tokens() |> Map.get(:refresh_token))
 
@@ -154,9 +157,11 @@ defmodule YipyipExAuth.Plugs do
       epl: extra_refresh_payload
     }
 
-    refresh_token = Token.sign(conn, refresh_salt, r_payload, refresh_token_opts)
+    comp_r_payload = compress_refresh_payload(r_payload)
+    refresh_token = Token.sign(conn, refresh_salt, comp_r_payload, refresh_token_opts)
     refresh_ttl = calc_ttl(session, now, max_refresh_ttl)
-    access_token = Token.sign(conn, access_salt, a_payload, access_token_opts)
+    comp_a_payload = compress_access_payload(a_payload)
+    access_token = Token.sign(conn, access_salt, comp_a_payload, access_token_opts)
     access_ttl = calc_ttl(session, now, max_access_ttl)
 
     tokens = %Tokens{

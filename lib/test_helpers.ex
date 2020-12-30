@@ -7,6 +7,7 @@ defmodule YipyipExAuth.TestHelpers do
   alias YipyipExAuth.Config
   @default_access_payload %{uid: 1, sid: "a", tst: :bearer, exp: nil, epl: %{}}
   @default_refresh_payload %{uid: 1, sid: "a", id: "a", tst: :bearer, exp: nil, epl: %{}}
+  alias YipyipExAuth.SharedInternals
 
   @doc """
   Sets request header "authorization" to "Bearer `access_token`".
@@ -40,7 +41,9 @@ defmodule YipyipExAuth.TestHelpers do
     Phoenix.Token.sign(
       token_context,
       config.access_token_salt,
-      Map.merge(@default_access_payload, payload_overrides),
+      @default_access_payload
+      |> Map.merge(payload_overrides)
+      |> SharedInternals.compress_access_payload(),
       key_digest: config.access_token_key_digest
     )
   end
@@ -59,7 +62,9 @@ defmodule YipyipExAuth.TestHelpers do
     Phoenix.Token.sign(
       token_context,
       config.refresh_token_salt,
-      Map.merge(@default_refresh_payload, payload_overrides),
+      @default_refresh_payload
+      |> Map.merge(payload_overrides)
+      |> SharedInternals.compress_refresh_payload(),
       key_digest: config.refresh_token_key_digest
     )
   end

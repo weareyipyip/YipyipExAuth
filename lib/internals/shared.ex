@@ -34,6 +34,34 @@ defmodule YipyipExAuth.SharedInternals do
   @doc false
   def auth_error(conn, error), do: Conn.put_private(conn, @private_auth_error_key, error)
 
+  @doc false
+  def compress_access_payload(pl), do: {pl.uid, pl.sid, pl.tst == :cookie, pl.exp, pl.epl}
+
+  @doc false
+  def decompress_access_payload({uid, sid, cookie?, exp, epl}) do
+    {:ok, %{uid: uid, sid: sid, tst: if(cookie?, do: :cookie, else: :bearer), exp: exp, epl: epl}}
+  end
+
+  def decompress_access_payload(_), do: {:error, :invalid_payload}
+
+  @doc false
+  def compress_refresh_payload(pl), do: {pl.id, pl.uid, pl.sid, pl.tst == :cookie, pl.exp, pl.epl}
+
+  @doc false
+  def decompress_refresh_payload({id, uid, sid, cookie?, exp, epl}) do
+    {:ok,
+     %{
+       id: id,
+       uid: uid,
+       sid: sid,
+       tst: if(cookie?, do: :cookie, else: :bearer),
+       exp: exp,
+       epl: epl
+     }}
+  end
+
+  def decompress_refresh_payload(_), do: {:error, :invalid_payload}
+
   ############
   # Privates #
   ############
