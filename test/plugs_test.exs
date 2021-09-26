@@ -57,6 +57,18 @@ defmodule YipyipExAuth.PlugsTest do
       assert session.expires_at == nil
     end
 
+    test "should store sessions with refresh ttl, not session ttl" do
+      # if this test fails, unused infinite sessions would keep accumulating in session stores
+      with_mock FakeSessionStore, upsert: fn _, _ -> :ok end do
+        build_conn()
+        |> Utils.set_token_signature_transport(:cookie)
+        |> Utils.set_user_id(1)
+        |> create_session(@config)
+
+        assert_called(FakeSessionStore.upsert(:_, @config.refresh_token_ttl))
+      end
+    end
+
     test "should not create tokens that outlive the session" do
       tokens =
         build_conn()

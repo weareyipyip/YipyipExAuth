@@ -80,8 +80,8 @@ defmodule YipyipExAuth.Plugs do
       ...> |> Utils.set_user_id(1)
       ...> |> create_session(@config)
       iex> cookies = conn |> Conn.fetch_cookies() |> Map.get(:cookies)
-      iex> <<access_sig::binary>> = Map.get(cookies, @config.access_cookie_name)
-      iex> <<refresh_sig::binary>> = Map.get(cookies, @config.refresh_cookie_name)
+      iex> <<_access_sig::binary>> = Map.get(cookies, @config.access_cookie_name)
+      iex> <<_refresh_sig::binary>> = Map.get(cookies, @config.refresh_cookie_name)
       iex> true = Regex.match?(~r/\\w\\.\\w/,  conn |> Utils.get_tokens() |> Map.get(:access_token))
       iex> true = Regex.match?(~r/\\w\\.\\w/,  conn |> Utils.get_tokens() |> Map.get(:refresh_token))
 
