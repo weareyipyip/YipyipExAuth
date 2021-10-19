@@ -3,6 +3,7 @@
 YipyipExAuth is an opinionated session manager for Elixir based on stateless access- and stateful refresh (Phoenix) tokens aimed at browser- and native clients that communicate with an Elixir API.
 
 ## Table of contents
+
 <!-- TOC -->
 
 - [YipyipExAuth](#YipyipExAuth)
@@ -17,6 +18,7 @@ YipyipExAuth is an opinionated session manager for Elixir based on stateless acc
     - [Setting up a session store](#setting-up-a-session-store)
     - [Protecting routes](#protecting-routes)
     - [Creating and refreshing sessions](#creating-and-refreshing-sessions)
+    - [Absinthe support](#absinthe-support)
   - [Documentation](#documentation)
   - [Nods](#nods)
 
@@ -51,7 +53,6 @@ A great many solutions exist for generating tokens to use in API authentication.
 This package is an attempt to have our cake and eat it at the same time, by splitting authentication tokens in two parts. Phoenix tokens (and JWT's) consist of three parts, basically `header.payload.signature`. The first two parts are not valid without the signature, and the signature is impossible to generate from the first two parts without the underlying signing key thanks to CryptographyTM. YipyipExAuth allows clients to specify at the creation of a session if they want to receive the signature part of their tokens in a secure, HTTP-only strictly-same-site cookie, or simply as part of the the whole token. Browser clients should use the former, native clients the latter. In case of a successful XSS breach of the web application only the token payloads will be exposed.
 
 Additionally, YipyipExAuth tries to strike a balance between statelessness and security, by using stateless short-lived access tokens and stateful refresh tokens. A server-side session store is maintained (and can be implemented in whatever DB system you like; genserver, Redis, Postgres or Mnesia can all be used by implementing a simple behaviour). Every time the tokens are refreshed, this database is queried. Depending on your access token TTL, this could be once every half an hour per client. By the time you outgrow a simple Redis cluster, you can hire a team of engineers to scale further.
-
 
 ## How to use
 
@@ -258,10 +259,13 @@ defmodule MyPhoenixAppWeb.CurrentSessionController do
 end
 ```
 
+### Absinthe support
+
+TBW
+
 ## Documentation
 
 Documentation can be found at [https://hexdocs.pm/yipyip_ex_auth](https://hexdocs.pm/yipyip_ex_auth).
-
 
 ## Nods
 

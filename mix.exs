@@ -41,6 +41,7 @@ defmodule YipyipExAuth.MixProject do
       {:ex_doc, "~> 0.21", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.4"},
+      {:absinthe_plug, "~> 1.5", optional: true},
       # to satisfy phoenix in tests
       {:jason, "~> 1.2", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: [:dev], runtime: false},
