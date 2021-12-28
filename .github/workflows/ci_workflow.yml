@@ -13,24 +13,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.2.0
+      - uses: erlef/setup-beam@v1
         with:
           otp-version: 22.x
           elixir-version: ${{matrix.elixir}}
       - name: Cache deps
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: deps
-          key: deps-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          path: |
+            deps
+            _build
+          key: deps-v2-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            deps-${{ matrix.elixir }}-
-      - name: Cache build
-        uses: actions/cache@v1
-        with:
-          path: _build
-          key: build-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            build-${{ matrix.elixir }}
+            deps-v2-${{ matrix.elixir }}-
       - name: Display build environment
         run: printenv
       - name: Install dependencies

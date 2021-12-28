@@ -9,7 +9,8 @@ defmodule YipyipExAuth.Models.Session do
             refreshed_at: nil,
             last_known_ip: nil,
             token_signature_transport: nil,
-            expires_at: nil
+            expires_at: nil,
+            extra_payload: %{}
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -19,6 +20,13 @@ defmodule YipyipExAuth.Models.Session do
           refreshed_at: integer,
           last_known_ip: String.t(),
           token_signature_transport: atom,
-          expires_at: integer | nil
+          expires_at: integer | nil,
+          extra_payload: map()
         }
+
+  @doc """
+  Create a new session struct from an old session struct.
+  """
+  @spec upgrade_old_session(struct()) :: t()
+  def upgrade_old_session(session), do: Map.merge(%__MODULE__{}, session)
 end
