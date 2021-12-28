@@ -193,7 +193,7 @@ defmodule MyPhoenixAppWeb.CurrentSessionController do
       |> Utils.set_user_id(user.id)
       |> Utils.set_token_signature_transport(signature_transport)
       # you can add extra payload to the tokens
-      |> YipyipPlugs.create_session(@config, %{roles: user.roles}, %{})
+      |> YipyipPlugs.upsert_session(@config, extra_access_payload: %{roles: user.roles})
       |> put_status(201)
       |> send_token_response(user)
     else
@@ -239,7 +239,8 @@ defmodule MyPhoenixAppWeb.CurrentSessionController do
 
       conn
       # there's no need to set user_id or token signature transport again
-      |> YipyipPlugs.create_session(@config, %{roles: user.roles}, %{})
+      # but all extra payload - access, refresh and session - has to be passed in again
+      |> YipyipPlugs.upsert_session(@config, extra_access_payload: %{roles: user.roles})
       |> send_token_response(user)
     else
       _error -> send_resp(conn, 401, "user not found or inactive")

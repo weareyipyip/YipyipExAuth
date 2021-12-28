@@ -26,7 +26,7 @@ defmodule YipyipExAuth.Plugs do
 
   The tokens' signatures are split off and sent as cookies if the session's token signature transport mechanism is set to `:cookie`. By default, these are http-only strictly-same-site secure cookies.
 
-  Optionally, it is possible to store extra payload in the access- and refresh tokens, which can be used to implement things like role-based authorization or forced logout after password change.
+  Optionally, it is possible to store extra payload in the access- and refresh tokens or in the server-side session. The extra payload can be used to implement things like role-based authorization or forced logout after password change.
 
   Raises on session store errors. No recovery is possible from this error - the session HAS to be stored or there is no point in handing out tokens.
 

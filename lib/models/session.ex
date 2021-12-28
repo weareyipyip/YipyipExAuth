@@ -28,5 +28,6 @@ defmodule YipyipExAuth.Models.Session do
   Create a new session struct from an old session struct.
   """
   @spec upgrade_old_session(struct()) :: t()
-  def upgrade_old_session(session), do: Map.merge(%__MODULE__{}, session)
+  def upgrade_old_session(session = %{extra_payload: _}), do: session
+  def upgrade_old_session(session), do: Map.put(session, :extra_payload, %{})
 end

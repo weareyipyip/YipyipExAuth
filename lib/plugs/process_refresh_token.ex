@@ -5,7 +5,7 @@ defmodule YipyipExAuth.Plugs.ProcessRefreshToken do
   The token signature source (bearer or cookie) must match the `token_signature_transport` specified in the token payload.
 
   A refresh token can only be used to refresh a session once. A single refresh token id is stored in the
-  server-side session by `YipyipExAuth.Plugs.create_session/2` to enforce this.
+  server-side session by `YipyipExAuth.Plugs.upsert_session/3` to enforce this.
 
   The plug does not reject unauthenticated requests by itself. If a request is successfully verified, the user ID, session ID and extra payload are assigned to the conn. If not, an authentication error message is put in the conn's private map, which can be retrieved using `YipyipExAuth.Utils.get_auth_error/1`. This allows applications to implement their own plug to reject unauthenticated requests, for example:
 

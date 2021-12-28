@@ -118,6 +118,8 @@ defmodule YipyipExAuth.PlugsTest do
         user_id: 1
       }
 
+      assert %Session{} = old_session
+
       with_mock FakeSessionStore, upsert: fn _, _ -> :ok end do
         assert %Session{extra_payload: %{}} =
                  build_conn()
