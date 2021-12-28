@@ -18,13 +18,11 @@ jobs:
 
       - name: Set version in readme
         uses: weareyipyip/set-version-action@v2
-        id: set-version
         with:
           source: tag
           file_path: README.md
       - name: Set version in mix.exs
         uses: weareyipyip/set-version-action@v2
-        id: set-version
         with:
           source: tag
           file_path: mix.exs
