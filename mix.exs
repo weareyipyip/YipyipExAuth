@@ -14,7 +14,7 @@ defmodule YipyipExAuth.MixProject do
       """,
       package: [
         name: "yipyip_ex_auth",
-        licenses: ["apache-2.0"],
+        licenses: ["Apache-2.0"],
         links: %{github: "https://github.com/weareyipyip/YipyipExAuth"},
         source_url: "https://github.com/weareyipyip/YipyipExAuth"
       ],
