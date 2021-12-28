@@ -17,6 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
+        id: beam
         with:
           otp-version: 22.x
           elixir-version: ${{matrix.elixir}}
@@ -26,9 +27,20 @@ jobs:
           path: |
             deps
             _build
-          key: deps-v2-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          key: deps-v2-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            deps-v2-${{ matrix.elixir }}-
+            deps-v2-${{ steps.beam.outputs.elixir-version }}-
+      - name: Cache Dialyzer PLT
+        uses: actions/cache@v2
+        id: plt_cache
+        with:
+          key: |
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
+          path: |
+            priv/plts
+
       - name: Display build environment
         run: printenv
       - name: Install dependencies

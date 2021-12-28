@@ -24,6 +24,9 @@ defmodule YipyipExAuth.MixProject do
         source_ref: "master",
         extras: ["./README.md"],
         main: "readme"
+      ],
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ]
     ]
   end

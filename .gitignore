@@ -23,3 +23,7 @@ erl_crash.dump
 yipyip_ex_auth-*.tar
 
 /.elixir_ls
+
+# ignore Dialyzer PLT cache
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
