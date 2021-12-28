@@ -4,7 +4,7 @@ defmodule YipyipExAuth.MixProject do
   def project do
     [
       app: :yipyip_ex_auth,
-      version: "0.2.1",
+      version: "0.0.0+development",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

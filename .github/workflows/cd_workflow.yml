@@ -7,22 +7,37 @@ jobs:
   deploy:
     name: Publish release
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
 
     steps:
       - name: Display build environment
         run: printenv
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set version in readme
+        uses: weareyipyip/set-version-action@v2
+        id: set-version
+        with:
+          source: tag
+          file_path: README.md
+      - name: Set version in mix.exs
+        uses: weareyipyip/set-version-action@v2
+        id: set-version
+        with:
+          source: tag
+          file_path: mix.exs
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: 22.x
           elixir-version: 1.10.x
       - name: Install dependencies
         run: mix do local.hex --force, local.rebar --force, deps.get
+
       - name: Compile code (warnings as errors)
         run: mix compile --warnings-as-errors
-      - name: Check that versions match in Git tag, readme and mix.exs
-        run: mix run check_versions.exs match_git_tag
       - name: Check code formatting
         run: mix format --check-formatted
       - name: Run tests (with coverage)
