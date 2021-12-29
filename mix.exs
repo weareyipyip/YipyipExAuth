@@ -4,7 +4,7 @@ defmodule YipyipExAuth.MixProject do
   def project do
     [
       app: :yipyip_ex_auth,
-      version: "0.2.1",
+      version: "0.0.0+development",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -14,7 +14,7 @@ defmodule YipyipExAuth.MixProject do
       """,
       package: [
         name: "yipyip_ex_auth",
-        licenses: ["apache-2.0"],
+        licenses: ["Apache-2.0"],
         links: %{github: "https://github.com/weareyipyip/YipyipExAuth"},
         source_url: "https://github.com/weareyipyip/YipyipExAuth"
       ],
@@ -24,6 +24,9 @@ defmodule YipyipExAuth.MixProject do
         source_ref: "master",
         extras: ["./README.md"],
         main: "readme"
+      ],
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
       ]
     ]
   end

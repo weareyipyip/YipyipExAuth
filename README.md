@@ -3,6 +3,7 @@
 YipyipExAuth is an opinionated session manager for Elixir based on stateless access- and stateful refresh (Phoenix) tokens aimed at browser- and native clients that communicate with an Elixir API.
 
 ## Table of contents
+
 <!-- TOC -->
 
 - [YipyipExAuth](#YipyipExAuth)
@@ -52,7 +53,6 @@ This package is an attempt to have our cake and eat it at the same time, by spli
 
 Additionally, YipyipExAuth tries to strike a balance between statelessness and security, by using stateless short-lived access tokens and stateful refresh tokens. A server-side session store is maintained (and can be implemented in whatever DB system you like; genserver, Redis, Postgres or Mnesia can all be used by implementing a simple behaviour). Every time the tokens are refreshed, this database is queried. Depending on your access token TTL, this could be once every half an hour per client. By the time you outgrow a simple Redis cluster, you can hire a team of engineers to scale further.
 
-
 ## How to use
 
 Getting up and running consists of 5 steps: installation, configuration, setting up a session store, protecting your routes and handing out tokens.
@@ -64,7 +64,7 @@ The package can be installed by adding `yipyip_ex_auth` to your list of dependen
 ```elixir
 def deps do
   [
-    {:yipyip_ex_auth, "~> 0.2.1"}
+    {:yipyip_ex_auth, "0.0.0+development"}
   ]
 end
 ```
@@ -193,7 +193,7 @@ defmodule MyPhoenixAppWeb.CurrentSessionController do
       |> Utils.set_user_id(user.id)
       |> Utils.set_token_signature_transport(signature_transport)
       # you can add extra payload to the tokens
-      |> YipyipPlugs.create_session(@config, %{roles: user.roles}, %{})
+      |> YipyipPlugs.upsert_session(@config, extra_access_payload: %{roles: user.roles})
       |> put_status(201)
       |> send_token_response(user)
     else
@@ -239,7 +239,8 @@ defmodule MyPhoenixAppWeb.CurrentSessionController do
 
       conn
       # there's no need to set user_id or token signature transport again
-      |> YipyipPlugs.create_session(@config, %{roles: user.roles}, %{})
+      # but all extra payload - access, refresh and session - has to be passed in again
+      |> YipyipPlugs.upsert_session(@config, extra_access_payload: %{roles: user.roles})
       |> send_token_response(user)
     else
       _error -> send_resp(conn, 401, "user not found or inactive")
@@ -261,7 +262,6 @@ end
 ## Documentation
 
 Documentation can be found at [https://hexdocs.pm/yipyip_ex_auth](https://hexdocs.pm/yipyip_ex_auth).
-
 
 ## Nods
 
