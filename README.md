@@ -1,4 +1,8 @@
-# YipyipExAuth
+# YipyipExAuth (retired!)
+
+All good things come to an end :) In the spirit of change through continuity, however, YipyipExAuth has a successor in [Charon](https://github.com/weareyipyip/charon), which offers new and exciting features such as an out-of-the-box session store, support for JWTs with both symmetric and asymmetric signatures and child packages that add Absinthe support and Oauth2 server capability. Check it out now :)
+
+## Description
 
 YipyipExAuth is an opinionated session manager for Elixir based on stateless access- and stateful refresh (Phoenix) tokens aimed at browser- and native clients that communicate with an Elixir API.
 

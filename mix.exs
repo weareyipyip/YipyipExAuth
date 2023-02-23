@@ -10,7 +10,7 @@ defmodule YipyipExAuth.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: """
-      Session manager for Elixir based on stateless access- and stateful refresh (Phoenix) tokens
+      YipyipExAuth has been retired and replaced by Charon. Check it out at https://github.com/weareyipyip/charon or https://hexdocs.pm/charon
       """,
       package: [
         name: "yipyip_ex_auth",
